@@ -34,7 +34,29 @@ TEST_CASE("should have error system") {
   error = Error::make(Error::FileNotExists);
   REQUIRE(error);
   REQUIRE(error.code == Error::FileNotExists);
+  std::stringstream stream;
+  stream << error;
+  REQUIRE(stream.str() == "file not exists");
   REQUIRE(error.to_string() == "file not exists");
+
+  error = Error::make(Error::FileNotExists, "filename.json");
+  REQUIRE(error.to_string() == "file not exists: filename.json");
+}
+
+std::stringstream& whitespace(std::stringstream& in) {
+  while (std::isspace(static_cast<unsigned char>(in.peek())) != 0) {
+    in.get();
+  }
+
+  return in;
+}
+
+TEST_CASE("should consume whitespaces: space, linefeed, carriage return, formfeed") {
+  std::stringstream in("  \n\t\r\f   chars");
+
+  whitespace(in);
+
+  REQUIRE(in.peek() == 'c');
 }
 
 TEST_CASE("should read all file content") {
@@ -45,4 +67,29 @@ TEST_CASE("should read all file content") {
   REQUIRE(a == "aaa");
   REQUIRE(b == "bbb");
   REQUIRE(c == "ccc");
+}
+
+TEST_CASE("parse Literal types") {
+  SECTION("null value") {
+    auto [value, error] = Parse("null");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsNull());
+  }
+  SECTION("true value") {
+    auto [value, error] = Parse("true");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsTrue());
+  }
+  SECTION("false value") {
+    auto [value, error] = Parse("false");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsFalse());
+  }
+
+  SECTION("literal error value") {
+    auto [value, error] = Parse("falsee");
+    REQUIRE(error);
+    REQUIRE(error.code == Error::LiteralElementParse);
+    REQUIRE(error.to_string() == "literal element parse failed: read falsee instead of false");
+  }
 }

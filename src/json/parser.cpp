@@ -9,11 +9,6 @@ bool File::Exists() const {
   return stat(filename.c_str(), &fileInfo) == 0;
 }
 
-std::pair<Value, Error> Parse(std::stringstream&& str) {
-  std::stringstream in{std::move(str)};
-  return std::pair(Value{}, Error{});
-}
-
 std::pair<std::stringstream, Error> ToStringStream(File file) {
   std::stringstream buffer;
   if (!file.Exists()) {
@@ -40,7 +35,17 @@ std::pair<Value, Error> Parse(File file) {
 }
 
 std::pair<Value, Error> Parse(std::string str) {
-  return std::pair(Value{}, Error{});
+  std::stringstream stream(str);
+  return Parse(std::move(stream));
+}
+
+std::pair<Value, Error> Parse(std::stringstream&& str) {
+  std::stringstream in{std::move(str)};
+
+  Value value;
+  auto error = value.Parse(in);
+
+  return std::pair(value, error);
 }
 
 }  // namespace json
