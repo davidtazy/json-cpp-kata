@@ -18,7 +18,10 @@ set (CMAKE_CXX_EXTENSIONS           OFF)
 ########### Tetris Library ###################
 
 add_library(${PROJECT_NAME} 
-    src/json/json.cpp)
+    src/json/json.cpp
+    src/json/error.cpp
+    src/json/parser.cpp
+    )
 add_library(${PROJECT_NAME}::${PROJECT_NAME}  ALIAS ${PROJECT_NAME} )
 target_include_directories(${PROJECT_NAME}  PUBLIC src)
 
