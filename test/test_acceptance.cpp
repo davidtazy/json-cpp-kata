@@ -43,14 +43,6 @@ TEST_CASE("should have error system") {
   REQUIRE(error.to_string() == "file not exists: filename.json");
 }
 
-std::stringstream& whitespace(std::stringstream& in) {
-  while (std::isspace(static_cast<unsigned char>(in.peek())) != 0) {
-    in.get();
-  }
-
-  return in;
-}
-
 TEST_CASE("should consume whitespaces: space, linefeed, carriage return, formfeed") {
   std::stringstream in("  \n\t\r\f   chars");
 
@@ -69,7 +61,7 @@ TEST_CASE("should read all file content") {
   REQUIRE(c == "ccc");
 }
 
-TEST_CASE("parse Literal types") {
+TEST_CASE("should parse Literal types") {
   SECTION("null value") {
     auto [value, error] = Parse("null");
     REQUIRE_FALSE(error);
@@ -82,6 +74,17 @@ TEST_CASE("parse Literal types") {
   }
   SECTION("false value") {
     auto [value, error] = Parse("false");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsFalse());
+  }
+
+  SECTION("literal value preceded with spaces") {
+    auto [value, error] = Parse("    false");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsFalse());
+  }
+  SECTION("literal value suffixed with spaces") {
+    auto [value, error] = Parse("false   ");
     REQUIRE_FALSE(error);
     REQUIRE(value.IsFalse());
   }

@@ -1,8 +1,11 @@
 #pragma once
+#include <cassert>
 #include <sstream>
 #include <variant>
 #include "json/error.h"
 namespace json {
+
+std::stringstream& whitespace(std::stringstream& in);
 
 struct Literal {
   std::string id{""};
@@ -36,6 +39,15 @@ struct False : public Literal {
 };
 struct Undefined {};
 
+struct Object {
+  bool begin_with(std::stringstream& in) const { return in.peek() == '{'; }
+
+  Error Parse(std::stringstream& in) {
+    assert(begin_with(in) && "should call Parse if sure that its an object");
+    in.ignore();
+  }
+};
+
 struct Value {
   using Variant = std::variant<Undefined, Null, True, False>;
 
@@ -60,6 +72,8 @@ struct Value {
   bool IsBool() const { return IsTrue() || IsFalse(); }
 
   Error Parse(std::stringstream& in) {
+    whitespace(in);
+
     if (auto v = True{}; v.begin_with(in)) {
       variant = v;
       return v.Parse(in);
