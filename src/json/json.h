@@ -3,20 +3,21 @@
 #include <sstream>
 #include <variant>
 #include "json/error.h"
+#include "json/string_stream.h"
 namespace json {
 
-std::stringstream& whitespace(std::stringstream& in);
+StringStream& whitespace(StringStream& in);
 
 struct Literal {
   std::string id{""};
 
-  bool begin_with(std::stringstream& in) const { return in.peek() == id.at(0); }
+  bool begin_with(StringStream& in) const { return in.peek() == id.at(0); }
 
-  Error Parse(std::stringstream& in) {
+  Error Parse(StringStream& in) {
     std::string n;
     in >> n;
     if (n != id) {
-      std::stringstream msg;
+      std::ostringstream msg;
       msg << "read " << n << " instead of " << id;
       return {Error::LiteralElementParse, msg};
     }
@@ -40,9 +41,9 @@ struct False : public Literal {
 struct Undefined {};
 
 struct Object {
-  bool begin_with(std::stringstream& in) const { return in.peek() == '{'; }
+  bool begin_with(StringStream& in) const { return in.peek() == '{'; }
 
-  Error Parse(std::stringstream& in) {
+  Error Parse(StringStream& in) {
     assert(begin_with(in) && "should call Parse if sure that its an object");
     in.ignore();
   }
@@ -71,7 +72,7 @@ struct Value {
   bool IsFalse() const { return std::holds_alternative<False>(variant); }
   bool IsBool() const { return IsTrue() || IsFalse(); }
 
-  Error Parse(std::stringstream& in) {
+  Error Parse(StringStream& in) {
     whitespace(in);
 
     if (auto v = True{}; v.begin_with(in)) {

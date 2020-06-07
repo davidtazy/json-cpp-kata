@@ -9,7 +9,7 @@ struct Error {
   std::string message;
   Error() = default;
   Error(Code code, std::string str = "") : code(code), message(str) {}
-  Error(Code code, const std::stringstream& str) : code(code), message(str.str()) {}
+  Error(Code code, const std::ostringstream& str) : code(code), message(str.str()) {}
 
   operator bool() const { return code != NoError; }
 

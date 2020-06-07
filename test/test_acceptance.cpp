@@ -34,7 +34,7 @@ TEST_CASE("should have error system") {
   error = Error::make(Error::FileNotExists);
   REQUIRE(error);
   REQUIRE(error.code == Error::FileNotExists);
-  std::stringstream stream;
+  std::ostringstream stream;
   stream << error;
   REQUIRE(stream.str() == "file not exists");
   REQUIRE(error.to_string() == "file not exists");
@@ -44,7 +44,7 @@ TEST_CASE("should have error system") {
 }
 
 TEST_CASE("should consume whitespaces: space, linefeed, carriage return, formfeed") {
-  std::stringstream in("  \n\t\r\f   chars");
+  StringStream in("  \n\t\r\f   chars");
 
   whitespace(in);
 

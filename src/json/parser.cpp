@@ -1,6 +1,7 @@
 #include "parser.h"
 #include <sys/stat.h>
 #include <fstream>
+#include "json/string_stream.h"
 
 namespace json {
 
@@ -40,7 +41,7 @@ std::pair<Value, Error> Parse(std::string str) {
 }
 
 std::pair<Value, Error> Parse(std::stringstream&& str) {
-  std::stringstream in{std::move(str)};
+  StringStream in{std::move(str)};
 
   Value value;
   auto error = value.Parse(in);

@@ -2,7 +2,7 @@
 
 namespace json {
 
-std::stringstream& whitespace(std::stringstream& in) {
+StringStream& whitespace(StringStream& in) {
   while (std::isspace(static_cast<unsigned char>(in.peek())) != 0) {
     in.get();
   }
