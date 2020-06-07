@@ -28,10 +28,10 @@ TEST_CASE("should parse json from string") {
 }
 
 TEST_CASE("should have error system") {
-  auto error = Error::make_ok();
+  auto error = Error{};
   REQUIRE_FALSE(error);
 
-  error = Error::make(Error::FileNotExists);
+  error = Error{Error::FileNotExists, Position(0, 0)};
   REQUIRE(error);
   REQUIRE(error.code == Error::FileNotExists);
   std::ostringstream stream;
@@ -39,7 +39,7 @@ TEST_CASE("should have error system") {
   REQUIRE(stream.str() == "file not exists");
   REQUIRE(error.to_string() == "file not exists");
 
-  error = Error::make(Error::FileNotExists, "filename.json");
+  error = Error{Error::FileNotExists, Position(0, 0), "filename.json"};
   REQUIRE(error.to_string() == "file not exists: filename.json");
 }
 
@@ -93,6 +93,6 @@ TEST_CASE("should parse Literal types") {
     auto [value, error] = Parse("falsee");
     REQUIRE(error);
     REQUIRE(error.code == Error::LiteralElementParse);
-    REQUIRE(error.to_string() == "literal element parse failed: read falsee instead of false");
+    REQUIRE(error.to_string() == "literal element parse failed 1:7: read falsee instead of false");
   }
 }

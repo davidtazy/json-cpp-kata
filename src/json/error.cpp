@@ -15,7 +15,9 @@ std::string Error::to_string() const {
     using namespace std::literals::string_literals;
     s = ": "s + message;
   }
-  return tstr.at(code) + s;
+  std::ostringstream out;
+  out << tstr.at(code) << pos << s;
+  return out.str();
 }
 
 std::ostream& operator<<(std::ostream& out, const Error& error) {

@@ -19,7 +19,7 @@ struct Literal {
     if (n != id) {
       std::ostringstream msg;
       msg << "read " << n << " instead of " << id;
-      return {Error::LiteralElementParse, msg};
+      return {Error::LiteralElementParse, in.Pos(), msg};
     }
     return {};
   }

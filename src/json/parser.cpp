@@ -13,17 +13,17 @@ bool File::Exists() const {
 std::pair<std::stringstream, Error> ToStringStream(File file) {
   std::stringstream buffer;
   if (!file.Exists()) {
-    return {std::move(buffer), {Error::FileNotExists}};
+    return {std::move(buffer), {Error::FileNotExists, Position{0, 0}}};
   }
   std::ifstream in(file.filename, std::ifstream::in);
 
   if (in.fail()) {
-    return {std::move(buffer), {Error::FileCannotBeOpened}};
+    return {std::move(buffer), {Error::FileCannotBeOpened, Position{0, 0}}};
   }
 
   buffer << in.rdbuf();
 
-  return std::pair{std::move(buffer), Error::make_ok()};
+  return std::pair{std::move(buffer), Error{}};
 }
 
 std::pair<Value, Error> Parse(File file) {

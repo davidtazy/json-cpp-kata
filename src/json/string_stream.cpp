@@ -3,7 +3,9 @@
 namespace json {
 
 std::ostream& operator<<(std::ostream& out, const Position& pos) {
-  return out << "line: " << pos.line << " column:" << pos.column;
+  if (pos.column == 0 && pos.line == 0)
+    return out;
+  return out << " " << pos.line << ":" << pos.column;
 }
 int StringStream::get() {
   auto c = in.get();
