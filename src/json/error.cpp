@@ -7,9 +7,9 @@ std::string Error::to_string() const {
       {NoError, "no error"},
       {FileNotExists, "file not exists"},
       {FileCannotBeOpened, "file cannot be opened"},
-      {LiteralElementParse, "literal element parse failed"}
-
-  };
+      {LiteralElementParse, "literal element parse failed"},
+      {UnfinishedString, "unfinished string"},
+      {MultiLineString, "multi string"}};
   std::string s;
   if (message.size()) {
     using namespace std::literals::string_literals;

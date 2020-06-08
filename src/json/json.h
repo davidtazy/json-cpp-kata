@@ -40,6 +40,37 @@ struct False : public Literal {
 };
 struct Undefined {};
 
+struct String {
+  std::string value;
+
+  bool begin_with(StringStream& in) const { return in.peek() == '"'; }
+
+  Error Parse(StringStream& in) {
+    assert(begin_with(in) && "should call Parse if sure that its a string");
+
+    value.clear();
+
+    in.ignore();
+    for (int c = in.peek();; c = in.peek()) {
+      if (c == '\n' || c == '\r') {
+        return {Error::MultiLineString, in.Pos()};
+      }
+      if (c == EOF) {
+        return {Error::UnfinishedString, in.Pos()};
+      }
+      if (c == '"' && value.back() != '\\') {
+        break;
+      }
+      value += in.get();
+    }
+    Escape();
+
+    return {};
+  }
+
+  void Escape();
+};  // namespace json
+
 struct Object {
   bool begin_with(StringStream& in) const { return in.peek() == '{'; }
 
@@ -50,7 +81,7 @@ struct Object {
 };
 
 struct Value {
-  using Variant = std::variant<Undefined, Null, True, False>;
+  using Variant = std::variant<Undefined, Null, True, False, String>;
 
   Value() = default;
 
@@ -62,6 +93,8 @@ struct Value {
     }
   }
 
+  explicit Value(std::string value) : variant{String{value}} {}
+
   explicit Value(nullptr_t t) : variant(Null{}) {}
 
   operator bool() const { return !IsUndefined(); }
@@ -71,6 +104,17 @@ struct Value {
   bool IsTrue() const { return std::holds_alternative<True>(variant); }
   bool IsFalse() const { return std::holds_alternative<False>(variant); }
   bool IsBool() const { return IsTrue() || IsFalse(); }
+  bool ToBool() const {
+    if (IsFalse())
+      return false;
+    if (IsTrue())
+      return true;
+    throw std::runtime_error("ToBool: value is not bool");
+  }
+
+  bool IsString() const { return std::holds_alternative<String>(variant); }
+
+  const std::string& ToString() const { return std::get<String>(variant).value; }
 
   Error Parse(StringStream& in) {
     whitespace(in);
@@ -86,6 +130,12 @@ struct Value {
     if (auto v = Null{}; v.begin_with(in)) {
       variant = v;
       return v.Parse(in);
+    }
+
+    if (auto v = String{}; v.begin_with(in)) {
+      auto error = v.Parse(in);
+      variant = v;
+      return error;
     }
 
     variant = Undefined{};

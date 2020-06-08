@@ -5,9 +5,16 @@
 namespace json {
 
 struct Error {
-  enum Code { NoError, FileNotExists, FileCannotBeOpened, LiteralElementParse };
+  enum Code {
+    NoError,
+    FileNotExists,
+    FileCannotBeOpened,
+    LiteralElementParse,
+    UnfinishedString,
+    MultiLineString,
+  };
   Code code{NoError};
-  Position pos;
+  Position pos{0, 0};
   std::string message;
 
   Error() = default;

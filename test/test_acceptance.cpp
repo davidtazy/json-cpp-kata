@@ -96,3 +96,72 @@ TEST_CASE("should parse Literal types") {
     REQUIRE(error.to_string() == "literal element parse failed 1:7: read falsee instead of false");
   }
 }
+
+TEST_CASE("should parse string") {
+  SECTION("simple string") {
+    auto [value, error] = Parse(R"("string")");
+    REQUIRE_FALSE(error);
+
+    REQUIRE(value.IsString());
+    REQUIRE(value.ToString() == "string");
+  }
+  SECTION("unfinished string is error") {
+    auto [value, error] = Parse(R"("string)");
+    REQUIRE(error);
+    REQUIRE(error.code == Error::UnfinishedString);
+  }
+  SECTION("multiline string is error") {
+    auto [value, error] = Parse(
+        R"("multi
+    line
+    string")");
+    REQUIRE(error);
+    REQUIRE(error.code == Error::MultiLineString);
+  }
+
+  SECTION("escaped multiline string ") {
+    auto [value, error] = Parse(R"("multi\nline\nstring")");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsString());
+    REQUIRE(value.ToString() == "multi\nline\nstring");
+  }
+
+  SECTION("escaped quote string ") {
+    auto [value, error] = Parse(R"("with\"quotes")");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsString());
+    REQUIRE(value.ToString() == R"(with"quotes)");
+  }
+
+  SECTION("escaped tab string ") {
+    auto [value, error] = Parse(R"("with\tquotes")");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsString());
+    REQUIRE(value.ToString() == "with\tquotes");
+  }
+  SECTION("escaped antislash string ") {
+    auto [value, error] = Parse(R"("with\\quotes")");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsString());
+    REQUIRE(value.ToString() == R"(with\quotes)");
+  }
+  SECTION("escaped slash string ") {
+    auto [value, error] = Parse(R"("with\/quotes")");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsString());
+    REQUIRE(value.ToString() == R"(with/quotes)");
+  }
+  SECTION(R"(escaped \b \f  \r string )") {
+    auto [value, error] = Parse(R"("with \b \f  \r quotes")");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsString());
+    REQUIRE(value.ToString() == "with \b \f  \r quotes");
+  }
+}
+
+TEST_CASE("escaped unicode string ", "[.][not implemented]") {
+  auto [value, error] = Parse(R"("with\u91ABquotes")");
+  REQUIRE_FALSE(error);
+  REQUIRE(value.IsString());
+  REQUIRE(value.ToString() == "with\u91ABquotes");
+}
