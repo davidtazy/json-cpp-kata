@@ -13,6 +13,7 @@ std::string Error::to_string() const {
       {UnfinishedObject, "unfinished object"},
       {ObjectMemberExpected, "object member expected"},
       {ObjectSemiColonExpected, " object semi column expected"},
+      {ObjectCommaExpected, " object comma expected"},
   };
   std::string s;
   if (message.size()) {

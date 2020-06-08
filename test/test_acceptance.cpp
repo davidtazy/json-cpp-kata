@@ -236,4 +236,71 @@ TEST_CASE("should parse object") {
     REQUIRE(obj.at("name").IsString());
     REQUIRE(obj.at("name").ToString() == "value");
   }
+
+  SECTION("should parse object with 2 compact members") {
+    auto [value, error] = Parse(R"__({"name":"value","other":"value2"})__");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsObject());
+    auto& obj = value.ToObject();
+    REQUIRE(obj.contains("name"));
+    REQUIRE(obj.at("name").IsString());
+    REQUIRE(obj.at("name").ToString() == "value");
+
+    REQUIRE(obj.contains("other"));
+    REQUIRE(obj.at("other").IsString());
+    REQUIRE(obj.at("other").ToString() == "value2");
+  }
+  SECTION("should parse object with 2  members and lot of space") {
+    auto [value, error] = Parse(
+        R"__({
+        "name":"value",
+        "other":"value2"
+        })__");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsObject());
+    auto& obj = value.ToObject();
+    REQUIRE(obj.contains("name"));
+    REQUIRE(obj.at("name").IsString());
+    REQUIRE(obj.at("name").ToString() == "value");
+
+    REQUIRE(obj.contains("other"));
+    REQUIRE(obj.at("other").IsString());
+    REQUIRE(obj.at("other").ToString() == "value2");
+  }
+
+  SECTION("should be copiable") {
+    auto [value, error] = Parse(
+        R"__({
+        "name":"value",
+        "other":"value2"
+        })__");
+
+    auto temp = value.ToObject();
+    auto obj = temp;
+    REQUIRE(obj.contains("name"));
+    REQUIRE(obj.at("name").IsString());
+    REQUIRE(obj.at("name").ToString() == "value");
+
+    REQUIRE(obj.contains("other"));
+    REQUIRE(obj.at("other").IsString());
+    REQUIRE(obj.at("other").ToString() == "value2");
+  }
+
+  SECTION("should be nestable") {
+    auto [value, error] = Parse(
+        R"__({
+        "name":{"other":"value2"}
+        
+        })__");
+
+    auto temp = value.ToObject();
+    auto obj = temp;
+    REQUIRE(obj.contains("name"));
+    REQUIRE(obj.at("name").IsObject());
+
+    const auto& nested = obj.at("name").ToObject();
+    REQUIRE(nested.contains("other"));
+    REQUIRE(nested.at("other").IsString());
+    REQUIRE(nested.at("other").ToString() == "value2");
+  }
 }

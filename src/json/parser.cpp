@@ -46,7 +46,7 @@ std::pair<Value, Error> Parse(std::stringstream&& str) {
   Value value;
   auto error = value.Parse(in);
 
-  return std::pair(value, error);
+  return std::pair(std::move(value), error);
 }
 
 }  // namespace json

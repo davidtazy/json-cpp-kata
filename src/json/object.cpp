@@ -33,37 +33,51 @@ bool Object::begin_with(StringStream& in) const {
 Error Object::Parse(StringStream& in) {
   assert(begin_with(in) && "should call Parse if sure that its an object");
 
-  in.ignore();  // consume  {
-  whitespace(in);
+  in.ignore();  // consume  '{'
 
-  if (in.peek() == EOF) {
-    return {Error::UnfinishedObject, in.Pos()};
-  }
-  if (in.peek() == '}') {
-    in.ignore();  // consume }
-    return {};
-  }
+  while (true) {
+    whitespace(in);
 
-  String name;
-  if (!name.begin_with(in)) {
-    return {Error::ObjectMemberExpected, in.Pos()};
-  }
+    auto next_char = in.peek();
 
-  if (auto error = name.Parse(in); error) {
-    return error;
-  }
-  // check name unicity ?
-  whitespace(in);
+    if (next_char == EOF) {
+      return {Error::UnfinishedObject, in.Pos()};
+    }
 
-  if (in.peek() != ':') {
-    std::ostringstream out;
-    out << "read " << static_cast<char>(in.peek());
-    return {Error::ObjectSemiColonExpected, in.Pos(), out};
-  }
-  in.ignore();
-  whitespace(in);
-  if (auto error = p->elements[name.value].Parse(in); error) {
-    return error;
+    if (next_char == '}') {
+      in.ignore();  // consume '}'
+      break;        // object parse happy end
+    }
+
+    if (p->elements.size()) {  // no comma for the first member to parse
+      if (next_char != ',') {
+        return {Error::ObjectCommaExpected, in.Pos()};
+      }
+      in.ignore();  // consume ','
+      whitespace(in);
+    }
+
+    String name;
+    if (!name.begin_with(in)) {
+      return {Error::ObjectMemberExpected, in.Pos()};
+    }
+
+    if (auto error = name.Parse(in); error) {
+      return error;
+    }
+
+    whitespace(in);
+
+    if (in.peek() != ':') {
+      std::ostringstream out;
+      out << "read " << static_cast<char>(in.peek());
+      return {Error::ObjectSemiColonExpected, in.Pos(), out};
+    }
+    in.ignore();
+    whitespace(in);
+    if (auto error = p->elements[name.value].Parse(in); error) {
+      return error;
+    }
   }
 
   return {};

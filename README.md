@@ -20,7 +20,7 @@ conan
 
 
 - [ ] value
-- [ ]     object
+- [x]     object
 - [ ]     array
 - [x]     string
 - [x]     number
@@ -28,16 +28,16 @@ conan
 - [x]     "false"
 - [x]     "null"
 
-- [ ]object
-- [ ]   '{' ws '}'
-- [ ]   '{' members '}'
+- [x]object
+- [x]   '{' ws '}'
+- [x]   '{' members '}'
 
-- [ ]members
-- [ ]   member
-- [ ]   member ',' members
+- [x]members
+- [x]   member
+- [x]   member ',' members
 
-- [ ]member
-- [ ]   ws string ws ':' element
+- [x]member
+- [x]   ws string ws ':' element
 
 - [ ]array
 - [ ]   '[' ws ']'
