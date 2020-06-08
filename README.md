@@ -1,5 +1,5 @@
-![Github Action Build](https://github.com/davidtazy/tetris_engine_kata/workflows/Github%20Action%20Build/badge.svg?branch=master)
-[![codecov](https://codecov.io/gh/davidtazy/tetris_engine_kata/branch/master/graph/badge.svg)](https://codecov.io/gh/davidtazy/tetris_engine_kata)
+![Github Action Build](https://github.com/davidtazy/json-cpp-kata/workflows/Github%20Action%20Build/badge.svg?branch=master)
+[![codecov](https://codecov.io/gh/davidtazy/json-cpp-kata/branch/master/graph/badge.svg)](https://codecov.io/gh/davidtazy/json-cpp-kata)
 
 <h1>functionnalities</h1>
 
