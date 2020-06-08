@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install conan
+        pip install conan==1.25.0
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: build  kcov  dependency
       run: |
