@@ -12,6 +12,9 @@ struct Error {
     LiteralElementParse,
     UnfinishedString,
     MultiLineString,
+    UnfinishedObject,
+    ObjectMemberExpected,
+    ObjectSemiColonExpected,
   };
   Code code{NoError};
   Position pos{0, 0};

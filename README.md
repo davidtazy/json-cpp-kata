@@ -15,5 +15,30 @@ cmake 3.7
 
 conan 
 
+<h1> functionnalities </h1>
 
 
+
+- [ ] value
+- [ ]     object
+- [ ]     array
+- [x]     string
+- [x]     number
+- [x]     "true"
+- [x]     "false"
+- [x]     "null"
+
+- [ ]object
+- [ ]   '{' ws '}'
+- [ ]   '{' members '}'
+
+- [ ]members
+- [ ]   member
+- [ ]   member ',' members
+
+- [ ]member
+- [ ]   ws string ws ':' element
+
+- [ ]array
+- [ ]   '[' ws ']'
+- ['[' elements ']'

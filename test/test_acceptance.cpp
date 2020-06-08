@@ -44,11 +44,20 @@ TEST_CASE("should have error system") {
 }
 
 TEST_CASE("should consume whitespaces: space, linefeed, carriage return, formfeed") {
-  StringStream in("  \n\t\r\f   chars");
+  {
+    StringStream in("  \n\t\r\f   chars");
 
-  whitespace(in);
+    whitespace(in);
 
-  REQUIRE(in.peek() == 'c');
+    REQUIRE(in.peek() == 'c');
+  }
+  {
+    StringStream in("cd");
+
+    whitespace(in);
+
+    REQUIRE(in.peek() == 'c');
+  }
 }
 
 TEST_CASE("should read all file content") {
@@ -120,7 +129,7 @@ TEST_CASE("should parse string") {
   }
 
   SECTION("escaped multiline string ") {
-    auto [value, error] = Parse(R"("multi\nline\nstring")");
+    auto [value, error] = Parse(R"("multi\nline\nstring",)");
     REQUIRE_FALSE(error);
     REQUIRE(value.IsString());
     REQUIRE(value.ToString() == "multi\nline\nstring");
@@ -156,6 +165,12 @@ TEST_CASE("should parse string") {
     REQUIRE_FALSE(error);
     REQUIRE(value.IsString());
     REQUIRE(value.ToString() == "with \b \f  \r quotes");
+  }
+
+  SECTION("consume last \"") {
+    auto [value, error] = Parse(R"("name")");
+    REQUIRE_FALSE(error);
+    REQUIRE(error.pos.column == 7);
   }
 }
 
@@ -196,5 +211,29 @@ TEST_CASE("should parse numbers") {
 
     REQUIRE(value.IsNumber());
     REQUIRE(value.ToNumber() == -230);
+  }
+}
+
+TEST_CASE("should parse object") {
+  SECTION("should parse an empty object") {
+    auto [value, error] = Parse("{}");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsObject());
+    REQUIRE(value.ToObject().empty());
+  }
+  SECTION("should report error if not starting with member name") {
+    auto [value, error] = Parse("{ 123}");
+    REQUIRE(error);
+    REQUIRE(error.code == Error::ObjectMemberExpected);
+  }
+
+  SECTION("should parse object with 1 member") {
+    auto [value, error] = Parse(R"__({"name":"value"})__");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsObject());
+    auto& obj = value.ToObject();
+    REQUIRE(obj.contains("name"));
+    REQUIRE(obj.at("name").IsString());
+    REQUIRE(obj.at("name").ToString() == "value");
   }
 }

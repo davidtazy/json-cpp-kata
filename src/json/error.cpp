@@ -9,7 +9,11 @@ std::string Error::to_string() const {
       {FileCannotBeOpened, "file cannot be opened"},
       {LiteralElementParse, "literal element parse failed"},
       {UnfinishedString, "unfinished string"},
-      {MultiLineString, "multi string"}};
+      {MultiLineString, "multi string"},
+      {UnfinishedObject, "unfinished object"},
+      {ObjectMemberExpected, "object member expected"},
+      {ObjectSemiColonExpected, " object semi column expected"},
+  };
   std::string s;
   if (message.size()) {
     using namespace std::literals::string_literals;

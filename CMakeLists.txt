@@ -22,6 +22,9 @@ add_library(${PROJECT_NAME}
     src/json/error.cpp
     src/json/parser.cpp
     src/json/string_stream.cpp
+    src/json/types.cpp
+    src/json/value.cpp
+    src/json/object.cpp
     )
 add_library(${PROJECT_NAME}::${PROJECT_NAME}  ALIAS ${PROJECT_NAME} )
 target_include_directories(${PROJECT_NAME}  PUBLIC src)
