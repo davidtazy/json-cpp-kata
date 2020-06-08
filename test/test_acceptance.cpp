@@ -304,3 +304,86 @@ TEST_CASE("should parse object") {
     REQUIRE(nested.at("other").ToString() == "value2");
   }
 }
+
+TEST_CASE("should parse array") {
+  SECTION("should parse an empty array") {
+    auto [value, error] = Parse("[]");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsArray());
+    REQUIRE(value.ToArray().size() == 0);
+  }
+
+  SECTION("should parse object with 1 element") {
+    auto [value, error] = Parse(R"__(["value"])__");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsArray());
+    auto& obj = value.ToArray();
+    REQUIRE(obj.size() == 1);
+    REQUIRE(obj.at(0).IsString());
+    REQUIRE(obj.at(0).ToString() == "value");
+  }
+
+  SECTION("should parse object with 2 compact members") {
+    auto [value, error] = Parse(R"__(["value","value2"])__");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsArray());
+    auto& obj = value.ToArray();
+    REQUIRE(obj.size() == 2);
+
+    REQUIRE(obj.at(0).IsString());
+    REQUIRE(obj.at(0).ToString() == "value");
+
+    REQUIRE(obj.at(1).IsString());
+    REQUIRE(obj.at(1).ToString() == "value2");
+  }
+  SECTION("should parse object with 2  members and lot of space") {
+    auto [value, error] = Parse(
+        R"__([  "value" , 
+              "value2"
+           ])__");
+    REQUIRE_FALSE(error);
+    REQUIRE(value.IsArray());
+    auto& obj = value.ToArray();
+    REQUIRE(obj.size() == 2);
+
+    REQUIRE(obj.at(0).IsString());
+    REQUIRE(obj.at(0).ToString() == "value");
+
+    REQUIRE(obj.at(1).IsString());
+    REQUIRE(obj.at(1).ToString() == "value2");
+  }
+
+  SECTION("should be copiable") {
+    auto [value, error] = Parse(
+        R"__([  "value" , 
+              "value2"
+           ])__");
+
+    auto temp = value.ToArray();
+    auto obj = temp;
+    REQUIRE(obj.size() == 2);
+
+    REQUIRE(obj.at(0).IsString());
+    REQUIRE(obj.at(0).ToString() == "value");
+
+    REQUIRE(obj.at(1).IsString());
+    REQUIRE(obj.at(1).ToString() == "value2");
+  }
+
+  SECTION("should be nestable") {
+    auto [value, error] = Parse(
+        R"__([  "value" , 
+              ["value2"]
+           ])__");
+
+    auto temp = value.ToArray();
+    auto obj = temp;
+
+    REQUIRE(obj.at(1).IsArray());
+
+    const auto& nested = obj.at(1).ToArray();
+    REQUIRE(nested.size() == 1);
+    REQUIRE(nested.at(0).IsString());
+    REQUIRE(nested.at(0).ToString() == "value2");
+  }
+}

@@ -16,6 +16,8 @@ struct Error {
     ObjectMemberExpected,
     ObjectSemiColonExpected,
     ObjectCommaExpected,
+    UnfinishedArray,
+    ArrayCommaExpected,
   };
   Code code{NoError};
   Position pos{0, 0};

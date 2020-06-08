@@ -35,6 +35,12 @@ Error Value::Parse(StringStream& in) {
     return error;
   }
 
+  if (auto v = Array{}; v.begin_with(in)) {
+    auto error = v.Parse(in);
+    variant = std::move(v);
+    return error;
+  }
+
   variant = Undefined{};
   return {};
 }

@@ -14,6 +14,9 @@ std::string Error::to_string() const {
       {ObjectMemberExpected, "object member expected"},
       {ObjectSemiColonExpected, " object semi column expected"},
       {ObjectCommaExpected, " object comma expected"},
+      {UnfinishedArray, " unfinished array"},
+      {ArrayCommaExpected, "array comma expected"},
+
   };
   std::string s;
   if (message.size()) {

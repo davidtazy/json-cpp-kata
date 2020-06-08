@@ -20,6 +20,10 @@ Object::Object(Object&& object) {
 Object::Object(const Object& object) : p{std::make_unique<Object::ObjectPrivate>()} {
   p->elements = object.p->elements;
 }
+Object& Object::operator=(const Object& object) {
+  p->elements = object.p->elements;
+  return *this;
+}
 
 Object& Object::operator=(Object&& object) {
   std::swap(object.p, p);

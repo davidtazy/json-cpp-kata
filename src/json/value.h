@@ -1,11 +1,12 @@
 #pragma once
 #include <variant>
+#include "json/array.h"
 #include "json/object.h"
 #include "json/types.h"
 
 namespace json {
 struct Value {
-  using Variant = std::variant<Undefined, Null, True, False, String, Number, Object>;
+  using Variant = std::variant<Undefined, Null, True, False, String, Number, Object, Array>;
 
   Value() = default;
 
@@ -44,8 +45,10 @@ struct Value {
   double ToNumber() const { return std::get<Number>(variant).value; }
 
   bool IsObject() const { return std::holds_alternative<Object>(variant); }
-
   const Object& ToObject() const { return std::get<Object>(variant); }
+
+  bool IsArray() const { return std::holds_alternative<Array>(variant); }
+  const Array& ToArray() const { return std::get<Array>(variant); }
 
   Error Parse(StringStream& in);
 

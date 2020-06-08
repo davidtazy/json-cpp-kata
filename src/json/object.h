@@ -11,6 +11,7 @@ struct Object {
   Object();
   ~Object();
   Object(const Object& object);
+  Object& operator=(const Object& object);
 
   Object(Object&& object);
   Object& operator=(Object&& object);

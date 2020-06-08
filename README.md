@@ -19,9 +19,9 @@ conan
 
 
 
-- [ ] value
+- [x] value
 - [x]     object
-- [ ]     array
+- [x]     array
 - [x]     string
 - [x]     number
 - [x]     "true"
@@ -39,6 +39,6 @@ conan
 - [x]member
 - [x]   ws string ws ':' element
 
-- [ ]array
-- [ ]   '[' ws ']'
-- ['[' elements ']'
+- [x]array
+- [x]   '[' ws ']'
+- [x[' elements ']'

@@ -25,6 +25,7 @@ add_library(${PROJECT_NAME}
     src/json/types.cpp
     src/json/value.cpp
     src/json/object.cpp
+    src/json/array.cpp
     )
 add_library(${PROJECT_NAME}::${PROJECT_NAME}  ALIAS ${PROJECT_NAME} )
 target_include_directories(${PROJECT_NAME}  PUBLIC src)
