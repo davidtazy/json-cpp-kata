@@ -165,3 +165,36 @@ TEST_CASE("escaped unicode string ", "[.][not implemented]") {
   REQUIRE(value.IsString());
   REQUIRE(value.ToString() == "with\u91ABquotes");
 }
+
+TEST_CASE("should parse numbers") {
+  SECTION("integer") {
+    auto [value, error] = Parse("42");
+    REQUIRE_FALSE(error);
+
+    REQUIRE(value.IsNumber());
+    REQUIRE(value.ToNumber() == 42);
+  }
+  SECTION("double") {
+    auto [value, error] = Parse("42.42");
+    REQUIRE_FALSE(error);
+
+    REQUIRE(value.IsNumber());
+    REQUIRE(value.ToNumber() == 42.42);
+  }
+
+  SECTION("f notation") {
+    auto [value, error] = Parse("2.3e2");
+    REQUIRE_FALSE(error);
+
+    REQUIRE(value.IsNumber());
+    REQUIRE(value.ToNumber() == 230);
+  }
+
+  SECTION("negative value") {
+    auto [value, error] = Parse("-2.3e2");
+    REQUIRE_FALSE(error);
+
+    REQUIRE(value.IsNumber());
+    REQUIRE(value.ToNumber() == -230);
+  }
+}

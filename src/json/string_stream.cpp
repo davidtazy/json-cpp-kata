@@ -7,6 +7,7 @@ std::ostream& operator<<(std::ostream& out, const Position& pos) {
     return out;
   return out << " " << pos.line << ":" << pos.column;
 }
+
 int StringStream::get() {
   auto c = in.get();
 
@@ -30,6 +31,15 @@ int StringStream::get() {
 StringStream& StringStream::operator>>(std::string& str) {
   in >> str;
   pos.column += str.size();
+  return *this;
+}
+
+StringStream& StringStream::operator>>(double& str) {
+  auto a = in.tellg();
+  in >> str;
+
+  pos.column += in.tellg() - a;
+
   return *this;
 }
 

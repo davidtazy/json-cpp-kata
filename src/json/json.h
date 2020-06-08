@@ -69,7 +69,20 @@ struct String {
   }
 
   void Escape();
-};  // namespace json
+};
+
+struct Number {
+  double value{};
+  bool begin_with(StringStream& in) const {
+    std::string id{"0123456789-"};
+    return id.find(static_cast<char>(in.peek())) != std::string::npos;
+  }
+
+  Error Parse(StringStream& in) {
+    in >> value;
+    return {};
+  }
+};
 
 struct Object {
   bool begin_with(StringStream& in) const { return in.peek() == '{'; }
@@ -81,7 +94,7 @@ struct Object {
 };
 
 struct Value {
-  using Variant = std::variant<Undefined, Null, True, False, String>;
+  using Variant = std::variant<Undefined, Null, True, False, String, Number>;
 
   Value() = default;
 
@@ -116,6 +129,8 @@ struct Value {
 
   const std::string& ToString() const { return std::get<String>(variant).value; }
 
+  bool IsNumber() const { return std::holds_alternative<Number>(variant); }
+  double ToNumber() const { return std::get<Number>(variant).value; }
   Error Parse(StringStream& in) {
     whitespace(in);
 
@@ -133,6 +148,11 @@ struct Value {
     }
 
     if (auto v = String{}; v.begin_with(in)) {
+      auto error = v.Parse(in);
+      variant = v;
+      return error;
+    }
+    if (auto v = Number{}; v.begin_with(in)) {
       auto error = v.Parse(in);
       variant = v;
       return error;

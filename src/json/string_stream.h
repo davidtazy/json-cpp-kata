@@ -38,6 +38,7 @@ struct StringStream {
   int get();
 
   StringStream& operator>>(std::string& str);
+  StringStream& operator>>(double& str);
 
   int peek() { return in.peek(); }
 
