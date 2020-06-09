@@ -4,7 +4,7 @@ project(cpp-json)
 option(CPPJSON_WITH_DEVELOPMENT_DEPENDANCIES " need conan package manager" ON)
 
 ########### dependencies from cmake #########
-if(TETRIS_WITH_DEVELOPMENT_DEPENDANCIES)
+if(CPPJSON_WITH_DEVELOPMENT_DEPENDANCIES)
     include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 endif()
 
@@ -39,8 +39,8 @@ if(CPPJSON_WITH_DEVELOPMENT_DEPENDANCIES)
     add_executable(test_cpp_json
                     test/main_catch.cpp
                     test/test_acceptance.cpp
-                    test/test_istream.cpp
-                    test/Testables.h)
+                    test/test_istream.cpp 
+                    )
     target_compile_definitions(test_cpp_json PUBLIC UNITEST_DIR="${CMAKE_CURRENT_SOURCE_DIR}/test")
     target_link_libraries(test_cpp_json ${PROJECT_NAME}::${PROJECT_NAME} Catch2::Catch2 )
 
